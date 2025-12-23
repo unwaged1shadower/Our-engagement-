@@ -1,60 +1,44 @@
-const totalImages = 30; // 👈 set your image count here
-let index = 1;
 
-const slide = document.getElementById("slide");
+const enterBtn = document.getElementById("enterBtn");
+const intro = document.getElementById("intro");
+const content = document.getElementById("content");
 const music = document.getElementById("bgMusic");
-const startScreen = document.getElementById("startScreen");
-const startBtn = document.getElementById("startBtn");
 
-const letterTextElement = document.getElementById("letterText");
-const fullLetter = letterTextElement.innerHTML;
-letterTextElement.innerHTML = "";
-
-/* ✅ REAL click event (mobile-safe) */
-startBtn.addEventListener("click", () => {
-  startScreen.style.display = "none";
-  document.getElementById("slideshow").classList.remove("hidden");
-
-  music.volume = 0.9;
-  music.play().catch(() => {
-    console.log("Music will start after interaction");
-  });
-
-  showImage();
+enterBtn.addEventListener("click", () => {
+  intro.style.display = "none";
+  content.classList.remove("hidden");
+  music.play();
 });
 
-function showImage() {
-  slide.classList.remove("zoom");
-  slide.style.opacity = 0;
+/* SLIDESHOW */
+let current = 1;
+const total = 44;
+const slide = document.getElementById("slide");
 
-  setTimeout(() => {
-    slide.src = `images/${index}.jpg`;
-    slide.style.opacity = 1;
+setInterval(() => {
+  current++;
+  if (current > total) current = 1;
+  slide.src = `photos/${current}.jpg`;
+}, 6000);
 
-    setTimeout(() => slide.classList.add("zoom"), 100);
+/* LETTER REVEAL */
+const letter = document.getElementById("letter");
 
-    index++;
-
-    if (index <= totalImages) {
-      setTimeout(showImage, 6000);
-    } else {
-      setTimeout(showLetter, 7000);
-    }
-  }, 2000);
-}
-
-function showLetter() {
-  document.getElementById("slideshow").style.display = "none";
-  document.getElementById("letter").classList.remove("hidden");
-  typeLetter();
-}
-
-/* Typing Effect */
-let charIndex = 0;
-function typeLetter() {
-  if (charIndex < fullLetter.length) {
-    letterTextElement.innerHTML += fullLetter.charAt(charIndex);
-    charIndex++;
-    setTimeout(typeLetter, 40);
+window.addEventListener("scroll", () => {
+  const pos = letter.getBoundingClientRect().top;
+  if (pos < window.innerHeight - 100) {
+    letter.classList.add("show");
   }
-}
+});
+
+/* HEARTS */
+setInterval(() => {
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerHTML = "♥";
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.fontSize = Math.random() * 20 + 15 + "px";
+  document.body.appendChild(heart);
+
+  setTimeout(() => heart.remove(), 8000);
+}, 400);
